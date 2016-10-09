@@ -111,6 +111,8 @@ typedef struct
    int height;                         /// requested height of image
    int framerate;                      /// Requested frame rate (fps)
    int quality;
+   int hflip;			       /// Horizontal flip of image or not
+   int vflip;			       /// Vertical flip of image or not
    RASPICAM_CAMERA_PARAMETERS camera_parameters; /// Camera setup parameters
 
    MMAL_COMPONENT_T *camera_component;    /// Pointer to the camera component
@@ -213,6 +215,25 @@ static void get_status(RASPIVID_STATE *state)
 
    // Set up the camera_parameters to default
    raspicamcontrol_set_defaults(&state->camera_parameters);
+
+   /* New code to allow hflip and vflip to be set */
+   if (ros::param::get("~hflip", temp )){
+	if(temp >= 0 && temp <= 1)
+		state->camera_parameters.hflip = temp;
+	else	state->camera_parameters.hflip = 0;
+   }else{
+	state->camera_parameters.hflip = 0;
+	ros::param::set("~hflip", 0);
+   }
+
+   if (ros::param::get("~vflip", temp )){
+	if(temp >= 0 && temp <= 1)
+		state->camera_parameters.vflip = temp;
+	else	state->camera_parameters.vflip = 0;
+   }else{
+	state->camera_parameters.vflip = 0;
+	ros::param::set("~vflip", 0);
+   }
 }
 
 
